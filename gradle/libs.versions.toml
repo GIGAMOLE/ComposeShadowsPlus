@@ -1,0 +1,48 @@
+[versions]
+
+# Android/Kotlin
+android_gradle_plugin_version = "8.0.2"
+androidx_ktx_version = "1.10.1"
+kotlin_version = "1.8.21"
+
+# Plugins
+ksp_version = "1.8.21-1.0.11"
+
+# Compose
+compose_compiler_version = "1.4.7"
+compose_bom_version = "2023.05.01"
+compose_activity_version = "1.7.1"
+compose_color_picker_version = "0.7.0"
+
+[plugins]
+
+ksp_gradle_plugin = { id = "com.google.devtools.ksp", version.ref = "ksp_version" }
+
+[libraries]
+
+# Android/Kotlin
+android_gradle_plugin = { module = "com.android.tools.build:gradle", version.ref = "android_gradle_plugin_version" }
+androidx_core = { module = "androidx.core:core", version.ref = "androidx_ktx_version" }
+androidx_ktx = { module = "androidx.core:core-ktx", version.ref = "androidx_ktx_version" }
+kotlin_gradle_plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin_version" }
+
+# Compose
+compose_bom = { module = "androidx.compose:compose-bom", version.ref = "compose_bom_version" }
+compose_material3 = { module = "androidx.compose.material3:material3" }
+compose_preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose_runtime = { module = "androidx.compose.runtime:runtime" }
+compose_activity = { module = "androidx.activity:activity-compose", version.ref = "compose_activity_version" }
+compose_color_picker = { module = "com.godaddy.android.colorpicker:compose-color-picker", version.ref = "compose_color_picker_version" }
+debug_compose_tooling = { module = "androidx.compose.ui:ui-tooling" }
+
+[bundles]
+
+compose = [
+    "compose.material3",
+    "compose.preview",
+    "compose.runtime",
+    "compose.activity"
+]
+debug_compose = [
+    "debug.compose.tooling"
+]
