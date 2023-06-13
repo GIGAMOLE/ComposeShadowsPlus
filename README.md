@@ -21,7 +21,7 @@ Features:
 
 | RSBlur | SoftLayer | Elevation |
 |-|-|-|
-| <img src="/media/rs_blur.gif" width="90%"/> | <img src="/media/soft_layer.gif" width="90%"/> | <img src="/media/elevation.gif" width="90%"/> |
+| <img src="/media/rs_blur.gif" width="250"/> | <img src="/media/soft_layer.gif" width="250"/> | <img src="/media/elevation.gif" width="250"/> |
 
 Download or clone this repository to discover the sample app.
 
@@ -100,11 +100,11 @@ Special thanks to the [GoDaddy](https://github.com/godaddy) for the amazing [col
 Created at [intive](https://intive.com).  
 **We spark digital excitement.**
 
-![](/media/credits.png)
+[![](/media/credits.png)](https://intive.com/)
 
 ## Author:
 
 [Basil Miller](https://www.linkedin.com/in/gigamole/)  
 [gigamole53@gmail.com](mailto:gigamole53@gmail.com)
 
-![](/media/footer.png)
+[![](/media/footer.png)](https://intive.com/careers)
