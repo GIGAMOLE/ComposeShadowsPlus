@@ -21,7 +21,7 @@ Features:
 
 | RSBlur | SoftLayer | Elevation |
 |-|-|-|
-| <img src="/media/rs_blur.gif" width="100%"/> | <img src="/media/soft_layer.gif" width="100%"/> | <img src="/media/elevation.gif" width="100%"/> |
+| <img src="/media/rs_blur.gif" width="90%"/> | <img src="/media/soft_layer.gif" width="90%"/> | <img src="/media/elevation.gif" width="90%"/> |
 
 Download or clone this repository to discover the sample app.
 
