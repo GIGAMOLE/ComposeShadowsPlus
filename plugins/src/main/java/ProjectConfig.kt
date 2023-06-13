@@ -8,6 +8,9 @@ object ProjectConfig {
     const val versionName = "1.0.0"
 
     const val namespace = "com.gigamole.composeshadowsplus"
+    const val group = "com.github.GIGAMOLE"
+    const val artifact = "ComposeShadowsPlus"
+    const val publication = "release"
 
     const val compileSdk = 33
     const val targetSdk = 33

@@ -9,6 +9,24 @@
 
 plugins {
     id("composeshadowsplus.library")
+    id("maven-publish")
+}
+
+group = ProjectConfig.group
+version = ProjectConfig.versionName
+
+publishing {
+    publications {
+        register<MavenPublication>(ProjectConfig.publication) {
+            groupId = ProjectConfig.group
+            artifactId = ProjectConfig.artifact
+            version = ProjectConfig.versionName
+
+            afterEvaluate {
+                from(components[ProjectConfig.publication])
+            }
+        }
+    }
 }
 
 android {
@@ -21,6 +39,13 @@ android {
 
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.compose.compiler.version.get()
+    }
+
+    publishing {
+        singleVariant(ProjectConfig.publication) {
+            withSourcesJar()
+            withJavadocJar()
+        }
     }
 }
 
