@@ -1,6 +1,6 @@
 [![](/media/header.png)](https://intive.com/)
 
-TODO: Android Arsenal | ![](https://jitpack.io/v/GIGAMOLE/ComposeShadowsPlus.svg?style=flat-square) | [Setup Guide](#setup)
+![](https://jitpack.io/v/GIGAMOLE/ComposeShadowsPlus.svg?style=flat-square) | [Setup Guide](#setup)
 | [Report new issue](https://github.com/GIGAMOLE/ComposeShadowsPlus/issues/new)
 
 # ComposeShadowsPlus
