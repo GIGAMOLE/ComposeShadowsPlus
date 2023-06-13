@@ -21,7 +21,7 @@ Features:
 
 | RSBlur | SoftLayer | Elevation |
 |-|-|-|
-| ![](/media/rs_blur.gif) | ![](/media/soft_layer.gif) | ![](/media/elevation.gif) |
+| <img src="/media/rs_blur.gif" width="200"/> | <img src="/media/soft_layer.gif" width="200"/> | <img src="/media/elevation.gif" width="200"/> |
 
 Download or clone this repository to discover the sample app.
 
@@ -52,7 +52,7 @@ Also, it's possible to download the latest artifact from the [releases page](htt
 
 ## Guide
 
-`ComposeShadowsPlus` provides two custom shadow `Modifier`s: [RSBlurShadow](#RSBlurShadow) and [SoftLayerShadow](#SoftLayerShadow)
+`ComposeShadowsPlus` provides two custom shadow `Modifiers`: [RSBlurShadow](#RSBlurShadow) and [SoftLayerShadow](#SoftLayerShadow)
 
 `ComposeShadowsPlus` common params:
 
