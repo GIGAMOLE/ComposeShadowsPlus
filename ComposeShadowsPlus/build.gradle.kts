@@ -9,7 +9,7 @@
 
 plugins {
     id("composeshadowsplus.library")
-    id("maven-publish")
+    `maven-publish`
 }
 
 group = ProjectConfig.group
