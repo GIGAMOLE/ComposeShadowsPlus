@@ -5,7 +5,7 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion
 
 object ProjectConfig {
     const val versionCode = 1
-    const val versionName = "1.0.0"
+    const val versionName = "1.0.1"
 
     const val namespace = "com.gigamole.composeshadowsplus"
     const val group = "com.github.GIGAMOLE"

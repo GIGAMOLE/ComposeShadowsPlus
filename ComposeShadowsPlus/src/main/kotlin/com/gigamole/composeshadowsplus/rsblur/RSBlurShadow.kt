@@ -22,6 +22,7 @@ import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -179,13 +180,8 @@ fun Modifier.rsBlurShadow(
                                     )
                                 }
                                 is Outline.Rounded -> {
-                                    canvas.drawRoundRect(
-                                        outline.roundRect.left,
-                                        outline.roundRect.top,
-                                        outline.roundRect.right,
-                                        outline.roundRect.bottom,
-                                        outline.roundRect.bottomLeftCornerRadius.x,
-                                        outline.roundRect.bottomLeftCornerRadius.y,
+                                    drawPath(
+                                        Path().apply { addRoundRect(outline.roundRect) }.asAndroidPath(),
                                         paint
                                     )
                                 }
