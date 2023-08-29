@@ -5,4 +5,8 @@ plugins {
 
 android {
     setup()
+
+    kotlinOptions {
+        jvmTarget = ProjectConfig.kotlinJvmTarget
+    }
 }

@@ -90,14 +90,15 @@ private fun MainScreen() {
 @Composable
 fun MainScreenDemoContent() {
     val shape = remember { RectangleShape }
-    val infiniteTransition = rememberInfiniteTransition()
+    val infiniteTransition = rememberInfiniteTransition(label = "DemoTransition")
 
     val angle by infiniteTransition.animateFloat(
         initialValue = 45.0F,
         targetValue = -315.0F,
         animationSpec = InfiniteRepeatableSpec(
             animation = tween(durationMillis = 3000)
-        )
+        ),
+        label = "Angle"
     )
     val radians by remember(angle) {
         derivedStateOf {
@@ -110,28 +111,32 @@ fun MainScreenDemoContent() {
             angle <= -120.0F && angle >= -230.0F -> Color.Magenta.copy(alpha = 0.3F)
             else -> Color.Black
         },
-        animationSpec = tween(durationMillis = 500)
+        animationSpec = tween(durationMillis = 500),
+        label = "ShadowColor"
     )
     val shadowRadius by animateDpAsState(
         targetValue = when {
             angle <= 10.0F && angle >= -190.0F -> 64.dp
             else -> 0.dp
         },
-        animationSpec = tween(durationMillis = 1000)
+        animationSpec = tween(durationMillis = 1000),
+        label = "ShadowRadius"
     )
     val shadowRadiusOffset by animateDpAsState(
         targetValue = when {
             angle <= 20.0F && angle >= -230.0F -> 36.dp
             else -> 16.dp
         },
-        animationSpec = tween(durationMillis = 1000)
+        animationSpec = tween(durationMillis = 1000),
+        label = "ShadowRadiusOffset"
     )
     val shadowSpread by animateDpAsState(
         targetValue = when {
             angle <= -20.0F && angle >= -180.0F -> (-6).dp
             else -> 0.dp
         },
-        animationSpec = tween(durationMillis = 1000)
+        animationSpec = tween(durationMillis = 1000),
+        label = "ShadowSpread"
     )
     val shadowOffset by remember(radians) {
         derivedStateOf {
@@ -231,7 +236,8 @@ fun MainScreenContent() {
                 .fillMaxWidth()
                 .aspectRatio(ratio = 1.0F)
                 .clipToBounds(),
-            targetState = shadowType
+            targetState = shadowType,
+            label = "ShadowTypeCrossfade"
         ) {
             when (it) {
                 ShadowType.RSBlur -> {

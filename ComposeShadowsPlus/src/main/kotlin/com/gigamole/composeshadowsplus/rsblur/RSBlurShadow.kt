@@ -50,14 +50,14 @@ import kotlin.math.pow
  * @see ScriptIntrinsicBlur.setRadius
  * @author GIGAMOLE
  */
-private const val RSBlurRadiusChunkSize = 25.0F
+private const val RS_BLUR_RADIUS_CHUNK_SIZE = 25.0F
 
 /**
  * RSBlur radius align exponential multiplier.
  *
  * @author GIGAMOLE
  */
-private const val RSBlurRadiusAlignMultiplier = 1.33F
+private const val RS_BLUR_RADIUS_ALIGN_MULTIPLIER = 1.33F
 
 /**
  * A [RenderScript]/[ScriptIntrinsicBlur] based shadow [Modifier].
@@ -96,7 +96,7 @@ fun Modifier.rsBlurShadow(
 
     with(density) {
         radiusPx = radius.toPx().let {
-            if (alignRadius) it.pow(x = RSBlurRadiusAlignMultiplier) else it
+            if (alignRadius) it.pow(x = RS_BLUR_RADIUS_ALIGN_MULTIPLIER) else it
         }
         offsetPx = Offset(
             x = offset.x.toPx(),
@@ -275,7 +275,7 @@ private fun applyBlur(
  *
  * @param radius The radius value.
  * @return A list of smaller radius chunks.
- * @see RSBlurRadiusChunkSize
+ * @see RS_BLUR_RADIUS_CHUNK_SIZE
  * @author GIGAMOLE
  */
 private fun chunkateRadius(radius: Float): List<Float> {
@@ -283,7 +283,7 @@ private fun chunkateRadius(radius: Float): List<Float> {
     var remainingRadius = radius
 
     while (remainingRadius > 0) {
-        val chunk = remainingRadius.coerceAtMost(RSBlurRadiusChunkSize)
+        val chunk = remainingRadius.coerceAtMost(RS_BLUR_RADIUS_CHUNK_SIZE)
 
         radiusChunks.add(chunk)
 

@@ -52,7 +52,7 @@ Also, it's possible to download the latest artifact from the [releases page](htt
 
 ## Guide
 
-`ComposeShadowsPlus` provides two custom shadow `Modifiers`: [RSBlurShadow](#RSBlurShadow) and [SoftLayerShadow](#SoftLayerShadow)
+`ComposeShadowsPlus` provides two custom shadow `Modifiers`: [RSBlurShadow](#rsblurshadow) and [SoftLayerShadow](#softlayershadow)
 
 `ComposeShadowsPlus` common params:
 

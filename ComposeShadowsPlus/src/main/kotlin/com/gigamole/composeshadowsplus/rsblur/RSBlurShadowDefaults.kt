@@ -7,5 +7,6 @@ package com.gigamole.composeshadowsplus.rsblur
  * @author GIGAMOLE
  */
 object RSBlurShadowDefaults {
+
     const val RSBlurShadowAlignRadius = true
 }
