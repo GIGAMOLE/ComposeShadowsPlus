@@ -21,7 +21,7 @@ Features:
 
 | RSBlur | SoftLayer | Elevation |
 |-|-|-|
-| <img src="/media/rs_blur.gif" width="240"/> | <img src="/media/soft_layer.gif" width="240"/> | <img src="/media/elevation.gif" width="240"/> |
+| <img src="/media/rs_blur.gif" width="248"/> | <img src="/media/soft_layer.gif" width="248"/> | <img src="/media/elevation.gif" width="248"/> |
 
 Download or clone this repository to discover the sample app.
 
@@ -46,7 +46,7 @@ dependencies {
 }
 ```
 
-Latest version is: ![](https://jitpack.io/v/GIGAMOLE/ComposeShadowsPlus.svg?style=flat-square).
+Latest version: ![](https://jitpack.io/v/GIGAMOLE/ComposeShadowsPlus.svg?style=flat-square).
 
 Also, it's possible to download the latest artifact from the [releases page](https://github.com/GIGAMOLE/ComposeShadowsPlus/releases).
 
@@ -58,15 +58,15 @@ Also, it's possible to download the latest artifact from the [releases page](htt
 
 | Param | Description |
 |-|-|
-|radius|The shadow radius.|
-|color|The shadow color.|
-|shape|The shadow shape.|
-|spread|The shadow positive or negative spread.|
-|offset|The shadow offset.|
+|`radius`|The shadow radius.|
+|`color`|The shadow color.|
+|`shape`|The shadow shape.|
+|`spread`|The shadow positive or negative spread.|
+|`offset`|The shadow offset.|
 
 `ShadowsPlusDefaults` contains default values of custom shadows.
 
-You can use `Modifier.shadowsPlus(...)` to set the custom shadows with `ShadowsPlusType` enum.
+You can use `Modifier.shadowsPlus(...)` to set the custom shadows with the `ShadowsPlusType` enum.
 
 ### RSBlurShadow
 
@@ -76,13 +76,13 @@ You can use `Modifier.shadowsPlus(...)` to set the custom shadows with `ShadowsP
 
 | Param | Description |
 |-|-|
-|alignRadius|The exponential align radius indicator.|
+|`alignRadius`|The exponential align radius indicator.|
 
 To apply `RSBlurShadow` use `Modifier.rsBlurShadow(...)`.
 
 ### SoftLayerShadow
 
-`SoftLayerShadow` uses `NativePaint.setShadowLayer(...)` to apply native shadow layer to the shadow content.
+`SoftLayerShadow` uses `NativePaint.setShadowLayer(...)` to apply the native shadow layer to the shadow content.
 
 To render `SoftLayerShadow`, Android devices with API < 28(P), need to use `View.LAYER_TYPE_SOFTWARE`. It's recommended to use `SoftLayerShadowContainer` to handle this
 automatically.
