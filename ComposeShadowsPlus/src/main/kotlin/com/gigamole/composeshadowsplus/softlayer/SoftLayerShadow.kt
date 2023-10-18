@@ -10,11 +10,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.scale
 import androidx.compose.ui.graphics.toArgb
@@ -22,8 +25,10 @@ import androidx.compose.ui.graphics.withSave
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.gigamole.composeshadowsplus.common.ShadowsPlusDefaults
+import com.gigamole.composeshadowsplus.common.clipShadowByPath
 import com.gigamole.composeshadowsplus.common.spreadScale
 import android.graphics.Paint as NativePaint
 
@@ -37,6 +42,7 @@ import android.graphics.Paint as NativePaint
  * @param shape The shadow shape.
  * @param spread The shadow spread.
  * @param offset The shadow offset.
+ * @param isAlphaContentClip Indicates whether the alpha (transparent) content should be clipped to the [shape].
  * @return The applied SoftLayerShadow [Modifier].
  * @see SoftLayerShadowContainer
  * @author GIGAMOLE
@@ -46,11 +52,11 @@ fun Modifier.softLayerShadow(
     color: Color = ShadowsPlusDefaults.ShadowColor,
     shape: Shape = ShadowsPlusDefaults.ShadowShape,
     spread: Dp = ShadowsPlusDefaults.ShadowSpread,
-    offset: DpOffset = ShadowsPlusDefaults.ShadowOffset
-): Modifier = this.drawBehind {
+    offset: DpOffset = ShadowsPlusDefaults.ShadowOffset,
+    isAlphaContentClip: Boolean = ShadowsPlusDefaults.IsAlphaContentClip
+): Modifier = this.drawWithCache {
     val radiusPx = radius.toPx()
     val isRadiusValid = radiusPx > 0.0F
-
     val paint = Paint().apply {
         this.color = if (isRadiusValid) {
             Color.Transparent
@@ -72,41 +78,56 @@ fun Modifier.softLayerShadow(
             }
         }
     }
+    val shapeOutline = shape.createOutline(
+        size = size,
+        layoutDirection = LayoutDirection.Rtl,
+        density = this
+    )
+    val shapePath = Path().apply {
+        addOutline(outline = shapeOutline)
+    }
 
-    drawIntoCanvas { canvas ->
-        canvas.withSave {
-            if (isRadiusValid.not()) {
-                canvas.translate(
-                    dx = offset.x.toPx(),
-                    dy = offset.y.toPx()
-                )
-            }
+    val drawShadowBlock: DrawScope.() -> Unit = {
+        drawIntoCanvas { canvas ->
+            canvas.withSave {
+                if (isRadiusValid.not()) {
+                    canvas.translate(
+                        dx = offset.x.toPx(),
+                        dy = offset.y.toPx()
+                    )
+                }
 
-            if (spread.value != 0.0F) {
-                canvas.scale(
-                    sx = spreadScale(
-                        spread = spread.toPx(),
-                        size = size.width
-                    ),
-                    sy = spreadScale(
-                        spread = spread.toPx(),
-                        size = size.height
-                    ),
-                    pivotX = center.x,
-                    pivotY = center.y
-                )
-            }
+                if (spread.value != 0.0F) {
+                    canvas.scale(
+                        sx = spreadScale(
+                            spread = spread.toPx(),
+                            size = size.width
+                        ),
+                        sy = spreadScale(
+                            spread = spread.toPx(),
+                            size = size.height
+                        ),
+                        pivotX = center.x,
+                        pivotY = center.y
+                    )
+                }
 
-            shape.createOutline(
-                size = size,
-                layoutDirection = layoutDirection,
-                density = this
-            ).let { outline ->
                 canvas.drawOutline(
-                    outline = outline,
+                    outline = shapeOutline,
                     paint = paint
                 )
             }
+        }
+    }
+
+    onDrawBehind {
+        if (isAlphaContentClip) {
+            clipShadowByPath(
+                path = shapePath,
+                block = drawShadowBlock
+            )
+        } else {
+            drawShadowBlock()
         }
     }
 }

@@ -1,8 +1,12 @@
 package com.gigamole.composeshadowsplus.common
 
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import com.gigamole.composeshadowsplus.rsblur.RSBlurShadowDefaults
@@ -33,7 +37,7 @@ internal fun spreadScale(
  * @param shape The shadow shape.
  * @param spread The shadow spread.
  * @param offset The shadow offset.
- * @param alignRadius The exponential align radius indicator.
+ * @param isAlignRadius The exponential align radius indicator.
  * @return The applied ComposeShadowsPlus [Modifier].
  * @see com.gigamole.composeshadowsplus.rsblur.rsBlurShadow
  * @see com.gigamole.composeshadowsplus.softlayer.softLayerShadow
@@ -46,7 +50,8 @@ fun Modifier.shadowsPlus(
     shape: Shape = ShadowsPlusDefaults.ShadowShape,
     spread: Dp = ShadowsPlusDefaults.ShadowSpread,
     offset: DpOffset = ShadowsPlusDefaults.ShadowOffset,
-    alignRadius: Boolean = RSBlurShadowDefaults.RSBlurShadowAlignRadius
+    isAlignRadius: Boolean = RSBlurShadowDefaults.RSBlurShadowIsAlignRadius,
+    isAlphaContentClip: Boolean = ShadowsPlusDefaults.IsAlphaContentClip
 ): Modifier = this.then(
     when (type) {
         ShadowsPlusType.RSBlur -> {
@@ -56,7 +61,8 @@ fun Modifier.shadowsPlus(
                 shape = shape,
                 spread = spread,
                 offset = offset,
-                alignRadius = alignRadius
+                isAlignRadius = isAlignRadius,
+                isAlphaContentClip = isAlphaContentClip
             )
         }
         ShadowsPlusType.SoftLayer -> {
@@ -65,8 +71,26 @@ fun Modifier.shadowsPlus(
                 color = color,
                 shape = shape,
                 spread = spread,
-                offset = offset
+                offset = offset,
+                isAlphaContentClip = isAlphaContentClip
             )
         }
     }
 )
+
+/**
+ * Clips the shadow by its shape [path].
+ *
+ * @param path The shape path.
+ * @param block The draw block after the clip.
+ */
+fun DrawScope.clipShadowByPath(
+    path: Path,
+    block: DrawScope.() -> Unit
+) {
+    clipPath(
+        path = path,
+        clipOp = ClipOp.Difference,
+        block = block
+    )
+}

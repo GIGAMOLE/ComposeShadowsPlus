@@ -24,7 +24,9 @@ import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.asAndroidPath
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toAndroidRectF
@@ -39,6 +41,7 @@ import androidx.compose.ui.unit.toSize
 import androidx.core.graphics.withSave
 import androidx.core.graphics.withTranslation
 import com.gigamole.composeshadowsplus.common.ShadowsPlusDefaults
+import com.gigamole.composeshadowsplus.common.clipShadowByPath
 import com.gigamole.composeshadowsplus.common.spreadScale
 import kotlin.math.abs
 import kotlin.math.pow
@@ -73,7 +76,8 @@ private const val RS_BLUR_RADIUS_ALIGN_MULTIPLIER = 1.33F
  * @param shape The shadow shape.
  * @param spread The shadow spread.
  * @param offset The shadow offset.
- * @param alignRadius The exponential align radius indicator.
+ * @param isAlignRadius The exponential align radius indicator.
+ * @param isAlphaContentClip Indicates whether the alpha (transparent) content should be clipped to the [shape].
  * @return The applied RSBlurShadow [Modifier].
  * @see chunkateRadius
  * @see applyBlur
@@ -85,8 +89,9 @@ fun Modifier.rsBlurShadow(
     shape: Shape = ShadowsPlusDefaults.ShadowShape,
     spread: Dp = ShadowsPlusDefaults.ShadowSpread,
     offset: DpOffset = ShadowsPlusDefaults.ShadowOffset,
-    alignRadius: Boolean = RSBlurShadowDefaults.RSBlurShadowAlignRadius
-): Modifier = composed {
+    isAlignRadius: Boolean = RSBlurShadowDefaults.RSBlurShadowIsAlignRadius,
+    isAlphaContentClip: Boolean = ShadowsPlusDefaults.IsAlphaContentClip
+): Modifier = this.composed {
     val context = LocalContext.current
     val density = LocalDensity.current
 
@@ -96,7 +101,7 @@ fun Modifier.rsBlurShadow(
 
     with(density) {
         radiusPx = radius.toPx().let {
-            if (alignRadius) it.pow(x = RS_BLUR_RADIUS_ALIGN_MULTIPLIER) else it
+            if (isAlignRadius) it.pow(x = RS_BLUR_RADIUS_ALIGN_MULTIPLIER) else it
         }
         offsetPx = Offset(
             x = offset.x.toPx(),
@@ -115,6 +120,14 @@ fun Modifier.rsBlurShadow(
     val bitmapWidth = size.width + blurWidth
     val bitmapHeight = size.height + blurHeight
 
+    val shapeOutline = shape.createOutline(
+        size = size,
+        layoutDirection = LayoutDirection.Rtl,
+        density = density
+    )
+    val shapePath = Path().apply {
+        addOutline(outline = shapeOutline)
+    }
     val bitmap by remember(
         bitmapWidth,
         bitmapHeight,
@@ -167,30 +180,24 @@ fun Modifier.rsBlurShadow(
                         }
 
                         // Draws outline by shape.
-                        shape.createOutline(
-                            size = size,
-                            layoutDirection = LayoutDirection.Rtl,
-                            density = density
-                        ).let { outline ->
-                            when (outline) {
-                                is Outline.Rectangle -> {
-                                    canvas.drawRect(
-                                        outline.rect.toAndroidRectF(),
-                                        paint
-                                    )
-                                }
-                                is Outline.Rounded -> {
-                                    drawPath(
-                                        Path().apply { addRoundRect(outline.roundRect) }.asAndroidPath(),
-                                        paint
-                                    )
-                                }
-                                is Outline.Generic -> {
-                                    canvas.drawPath(
-                                        outline.path.asAndroidPath(),
-                                        paint
-                                    )
-                                }
+                        when (shapeOutline) {
+                            is Outline.Rectangle -> {
+                                canvas.drawRect(
+                                    shapeOutline.rect.toAndroidRectF(),
+                                    paint
+                                )
+                            }
+                            is Outline.Rounded -> {
+                                drawPath(
+                                    Path().apply { addRoundRect(shapeOutline.roundRect) }.asAndroidPath(),
+                                    paint
+                                )
+                            }
+                            is Outline.Generic -> {
+                                canvas.drawPath(
+                                    shapeOutline.path.asAndroidPath(),
+                                    paint
+                                )
                             }
                         }
                     }
@@ -220,25 +227,37 @@ fun Modifier.rsBlurShadow(
             bitmap
         }
     }
+    val drawShadowBitmapBlock: DrawScope.() -> Unit = {
+        // Draws blurred Bitmap on the background.
+        drawIntoCanvas { canvas ->
+            bitmap?.let {
+                canvas.nativeCanvas.drawBitmap(
+                    it,
+                    -halfBlurSize + offsetPx.x,
+                    -halfBlurSize + offsetPx.y,
+                    null
+                )
+            }
+        }
+    }
 
     Modifier
         .onPlaced {
             // Captures Composable element size.
             size = it.size.toSize()
         }
-        .drawBehind {
-            // Draws blurred Bitmap on the background.
-            drawIntoCanvas { canvas ->
-                bitmap?.let {
-                    canvas.nativeCanvas.drawBitmap(
-                        it,
-                        -halfBlurSize + offsetPx.x,
-                        -halfBlurSize + offsetPx.y,
-                        null
+        .drawBehind(
+            onDraw = if (isAlphaContentClip) {
+                {
+                    clipShadowByPath(
+                        path = shapePath,
+                        block = drawShadowBitmapBlock
                     )
                 }
+            } else {
+                drawShadowBitmapBlock
             }
-        }
+        )
 }
 
 /**

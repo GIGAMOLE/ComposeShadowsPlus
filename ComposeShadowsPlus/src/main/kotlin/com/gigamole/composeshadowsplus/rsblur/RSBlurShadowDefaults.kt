@@ -8,5 +8,5 @@ package com.gigamole.composeshadowsplus.rsblur
  */
 object RSBlurShadowDefaults {
 
-    const val RSBlurShadowAlignRadius = true
+    const val RSBlurShadowIsAlignRadius = true
 }

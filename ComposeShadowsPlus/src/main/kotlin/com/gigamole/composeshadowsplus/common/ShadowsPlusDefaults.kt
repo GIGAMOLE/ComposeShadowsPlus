@@ -32,4 +32,7 @@ object ShadowsPlusDefaults {
         x = 0.dp,
         y = 2.dp
     )
+
+    /** Default indicator for alpha content clip. */
+    const val IsAlphaContentClip = false
 }

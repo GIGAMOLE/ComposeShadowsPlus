@@ -12,6 +12,9 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,6 +29,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
@@ -50,14 +54,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import com.gigamole.composeshadowsplus.common.ShadowsPlusDefaults
+import com.gigamole.composeshadowsplus.elevation.AlphaContentElevationShadow
 import com.gigamole.composeshadowsplus.rsblur.RSBlurShadowDefaults
 import com.gigamole.composeshadowsplus.rsblur.rsBlurShadow
 import com.gigamole.composeshadowsplus.softlayer.SoftLayerShadowContainer
@@ -72,8 +81,16 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContent {
-            MainScreen()
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .systemBarsPadding()
+            ) {
+                MainScreen()
+            }
         }
     }
 }
@@ -203,9 +220,12 @@ fun MainScreenContent() {
     var shadowSpread by remember { mutableStateOf(ShadowsPlusDefaults.ShadowSpread) }
     var shadowOffsetX by remember { mutableStateOf(ShadowsPlusDefaults.ShadowOffset.x) }
     var shadowOffsetY by remember { mutableStateOf(ShadowsPlusDefaults.ShadowOffset.y) }
-    var rsBlurShadowAlignRadius by remember { mutableStateOf(RSBlurShadowDefaults.RSBlurShadowAlignRadius) }
+    var rsBlurShadowAlignRadius by remember { mutableStateOf(RSBlurShadowDefaults.RSBlurShadowIsAlignRadius) }
+    var isAlphaContentClip by remember { mutableStateOf(false) }
+    var alphaContentColor by remember { mutableStateOf(Color.White) }
 
-    var isColorPickerVisible by remember { mutableStateOf(false) }
+    var isShadowColorPickerVisible by remember { mutableStateOf(false) }
+    var isAlphaContentColorPickerVisible by remember { mutableStateOf(false) }
 
     val shadowShape by remember(shadowShapeType) {
         derivedStateOf {
@@ -229,43 +249,49 @@ fun MainScreenContent() {
             shadowColor.copy(alpha = 1.0F)
         }
     }
+    val contentColor by remember(
+        isAlphaContentClip,
+        alphaContentColor
+    ) {
+        derivedStateOf {
+            if (isAlphaContentClip) {
+                alphaContentColor
+            } else {
+                Color.White
+            }
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        Crossfade(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(ratio = 1.0F)
                 .clipToBounds(),
-            targetState = shadowType,
-            label = "ShadowTypeCrossfade"
+            contentAlignment = Alignment.Center
         ) {
-            when (it) {
-                ShadowType.RSBlur -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(all = 64.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .rsBlurShadow(
-                                    radius = shadowRadius,
-                                    color = shadowColor,
-                                    shape = shadowShape,
-                                    spread = shadowSpread,
-                                    offset = shadowOffset,
-                                    alignRadius = rsBlurShadowAlignRadius
-                                )
-                                .background(
-                                    color = Color.White,
-                                    shape = shadowShape
-                                )
-                        )
-                    }
-                }
-                ShadowType.SoftLayer -> {
-                    SoftLayerShadowContainer {
+            androidx.compose.animation.AnimatedVisibility(
+                modifier = Modifier.fillMaxSize(),
+                visible = isAlphaContentClip,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Image(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .alpha(alpha = 0.35F),
+                    painter = painterResource(id = R.drawable.img_alpha),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null
+                )
+            }
+            Crossfade(
+                modifier = Modifier.fillMaxSize(),
+                targetState = shadowType,
+                label = "ShadowTypeCrossfade"
+            ) {
+                when (it) {
+                    ShadowType.RSBlur -> {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -274,41 +300,96 @@ fun MainScreenContent() {
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .softLayerShadow(
+                                    .rsBlurShadow(
                                         radius = shadowRadius,
                                         color = shadowColor,
                                         shape = shadowShape,
                                         spread = shadowSpread,
-                                        offset = shadowOffset
+                                        offset = shadowOffset,
+                                        isAlignRadius = rsBlurShadowAlignRadius,
+                                        isAlphaContentClip = isAlphaContentClip
                                     )
                                     .background(
-                                        color = Color.White,
-                                        shape = shadowShape
+                                        color = contentColor,
+                                        shape = shadowShape,
                                     )
                             )
                         }
                     }
-                }
-                ShadowType.Elevation -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(all = 64.dp)
-                    ) {
+                    ShadowType.SoftLayer -> {
+                        SoftLayerShadowContainer {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(all = 64.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .softLayerShadow(
+                                            radius = shadowRadius,
+                                            color = shadowColor,
+                                            shape = shadowShape,
+                                            spread = shadowSpread,
+                                            offset = shadowOffset,
+                                            isAlphaContentClip = isAlphaContentClip
+                                        )
+                                        .background(
+                                            color = contentColor,
+                                            shape = shadowShape
+                                        )
+                                )
+                            }
+                        }
+                    }
+                    ShadowType.Elevation -> {
                         Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .shadow(
-                                    elevation = shadowRadius,
-                                    shape = shadowShape,
-                                    ambientColor = elevationColor,
-                                    spotColor = elevationColor
-                                )
-                                .background(
-                                    color = Color.White,
-                                    shape = shadowShape
-                                )
-                        )
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Crossfade(
+                                modifier = Modifier.fillMaxSize(),
+                                targetState = isAlphaContentClip,
+                                label = "ElevationShadowIsAlphaContentClip"
+                            ) { isAlphaContentClipState ->
+                                if (isAlphaContentClipState) {
+                                    AlphaContentElevationShadow(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(all = 64.dp),
+                                        elevation = shadowRadius,
+                                        shape = shadowShape,
+                                        ambientColor = shadowColor,
+                                        spotColor = shadowColor
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .background(
+                                                    color = contentColor,
+                                                    shape = shadowShape
+                                                )
+                                        )
+                                    }
+                                } else {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(all = 64.dp)
+                                            .shadow(
+                                                elevation = shadowRadius,
+                                                shape = shadowShape,
+                                                ambientColor = elevationColor,
+                                                spotColor = elevationColor
+                                            )
+                                            .background(
+                                                color = contentColor,
+                                                shape = shadowShape
+                                            )
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -380,7 +461,8 @@ fun MainScreenContent() {
                 Button(
                     modifier = Modifier.weight(weight = 1.0F),
                     onClick = {
-                        isColorPickerVisible = true
+                        isShadowColorPickerVisible = true
+                        isAlphaContentColorPickerVisible = false
                     }
                 ) {
                     Text(text = "PICK COLOR")
@@ -393,8 +475,14 @@ fun MainScreenContent() {
                             color = shadowColor,
                             shape = RoundedCornerShape(size = 4.dp)
                         )
+                        .border(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(size = 4.dp),
+                            width = 1.dp
+                        )
                         .clickable {
-                            isColorPickerVisible = true
+                            isShadowColorPickerVisible = true
+                            isAlphaContentColorPickerVisible = false
                         }
                 )
             }
@@ -516,7 +604,7 @@ fun MainScreenContent() {
 
                 Text(
                     modifier = Modifier.padding(top = 20.dp),
-                    text = "OFFSET X:",
+                    text = "OFFSET Y:",
                     style = MaterialTheme.typography.labelLarge
                 )
                 Slider(
@@ -541,15 +629,78 @@ fun MainScreenContent() {
                     valueRange = -32.0F..32.0F,
                     steps = 64
                 )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(space = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier.weight(weight = 1.0F),
+                        text = "IS ALPHA CONTENT CLIP:",
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                    Switch(
+                        checked = isAlphaContentClip,
+                        onCheckedChange = {
+                            isAlphaContentClip = it
+                        }
+                    )
+                }
+            }
+
+            if (isAlphaContentClip) {
+                Text(
+                    modifier = Modifier.padding(top = 20.dp),
+                    text = "ALPHA CONTENT COLOR:",
+                    style = MaterialTheme.typography.labelLarge
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(intrinsicSize = IntrinsicSize.Min),
+                    horizontalArrangement = Arrangement.spacedBy(space = 20.dp)
+                ) {
+                    Button(
+                        modifier = Modifier.weight(weight = 1.0F),
+                        onClick = {
+                            isAlphaContentColorPickerVisible = true
+                            isShadowColorPickerVisible = false
+                        }
+                    ) {
+                        Text(text = "PICK COLOR")
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .aspectRatio(ratio = 1.0F)
+                            .background(
+                                color = alphaContentColor,
+                                shape = RoundedCornerShape(size = 4.dp)
+                            )
+                            .border(
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = RoundedCornerShape(size = 4.dp),
+                                width = 1.dp
+                            )
+                            .clickable {
+                                isAlphaContentColorPickerVisible = true
+                                isShadowColorPickerVisible = false
+                            }
+                    )
+                }
             }
         }
     }
 
-    if (isColorPickerVisible) {
+    if (isShadowColorPickerVisible || isAlphaContentColorPickerVisible) {
         ModalBottomSheet(
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             onDismissRequest = {
-                isColorPickerVisible = false
+                isShadowColorPickerVisible = false
+                isAlphaContentColorPickerVisible = false
             }
         ) {
             ClassicColorPicker(
@@ -558,9 +709,19 @@ fun MainScreenContent() {
                     .height(height = 300.dp)
                     .padding(horizontal = 20.dp)
                     .padding(bottom = 20.dp),
-                color = HsvColor.from(shadowColor)
+                color = HsvColor.from(
+                    if (isShadowColorPickerVisible) {
+                        shadowColor
+                    } else {
+                        alphaContentColor
+                    }
+                )
             ) {
-                shadowColor = it.toColor()
+                if (isShadowColorPickerVisible) {
+                    shadowColor = it.toColor()
+                } else {
+                    alphaContentColor = it.toColor()
+                }
             }
         }
     }

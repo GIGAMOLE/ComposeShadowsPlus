@@ -19,9 +19,9 @@ Features:
 
 ## Sample App
 
-| RSBlur | SoftLayer | Elevation |
+| RSBlur | SoftLayer | Elevation | Alpha Content |
 |-|-|-|
-| <img src="/media/rs_blur.gif" width="248"/> | <img src="/media/soft_layer.gif" width="248"/> | <img src="/media/elevation.gif" width="248"/> |
+| <img src="/media/rs_blur.gif" width="190"/> | <img src="/media/soft_layer.gif" width="190"/> | <img src="/media/elevation.gif" width="190"/> | <img src="/media/alpha_content.gif" width="190"/> |
 
 Download or clone this repository to discover the sample app.
 
@@ -63,6 +63,7 @@ Also, it's possible to download the latest artifact from the [releases page](htt
 |`shape`|The shadow shape.|
 |`spread`|The shadow positive or negative spread.|
 |`offset`|The shadow offset.|
+|`isAlphaContentClip`|Indicates if shadow is clipped for alpha content.|
 
 `ShadowsPlusDefaults` contains default values of custom shadows.
 
@@ -88,6 +89,12 @@ To render `SoftLayerShadow`, Android devices with API < 28(P), need to use `View
 automatically.
 
 To apply `SoftLayerShadow` use `Modifier.softLayerShadow(...)`.
+
+### Elevation
+
+To use clipped shadow for alpha content with `elevation`(Android Compose `.shadow(...)`), wrap your content with `AlphaContentElevationShadow`.
+
+If you want the clipped `elevation` as `Modifier` use [shadow-gadgets library](https://github.com/zed-alpha/shadow-gadgets).
 
 ## License
 
