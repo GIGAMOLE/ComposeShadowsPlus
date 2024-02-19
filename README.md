@@ -1,4 +1,4 @@
-[![](/media/header.png)](https://intive.com/)
+![](/media/header.png)
 
 ![](https://jitpack.io/v/GIGAMOLE/ComposeShadowsPlus.svg?style=flat-square) | [Setup Guide](#setup)
 | [Report new issue](https://github.com/GIGAMOLE/ComposeShadowsPlus/issues/new)
@@ -104,14 +104,7 @@ MIT License. See the [LICENSE](https://github.com/GIGAMOLE/ComposeShadowsPlus/bl
 
 Special thanks to the [GoDaddy](https://github.com/godaddy) for the amazing [color picker library](https://github.com/godaddy/compose-color-picker).
 
-Created at [intive](https://intive.com).  
-**We spark digital excitement.**
-
-[![](/media/credits.png)](https://intive.com/)
-
 ## Author:
 
 [Basil Miller](https://www.linkedin.com/in/gigamole/)  
 [gigamole53@gmail.com](mailto:gigamole53@gmail.com)
-
-[![](/media/footer.png)](https://intive.com/careers)
